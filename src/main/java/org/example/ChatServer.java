@@ -1,31 +1,25 @@
 package org.example;
 
-import org.example.exception.UgException;
-
+import org.example.wrapper.UgServerSocket;
+import org.example.wrapper.UgSocket;
+import org.example.wrapper.exception.UgException;
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Scanner;
 
 public class ChatServer {
 
     private static long clientSequence = 1l;
+    private static final Scanner scanner = new Scanner(System.in);
 
-    private final ServerSocket socket;
-
-    private BufferedReader in = null;
-    private BufferedWriter out = null;
+    private final UgServerSocket socket;
 
     public ChatServer(int port) {
-        try {
-            this.socket = new ServerSocket(port);
-            System.out.println("server started");
-        } catch (IOException e) {
-            throw new UgException(e);
-        }
+        socket = new UgServerSocket(port);
+
+        System.out.println("server started");
     }
 
-    public void run() throws IOException {
+    public void run() {
         while (true) {
             Connection con = acceptClient();
 
@@ -34,30 +28,24 @@ public class ChatServer {
     }
 
     private Connection acceptClient() {
-        Socket client = null;
-        try {
-            System.out.println("waiting client");
-            client = socket.accept();
 
-            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+        System.out.println("Waiting client...");
+        UgSocket client = socket.accept();
+        System.out.println("Connected!!");
 
-            sendMessage("server > Hello client-" + clientSequence++);
+        Connection con = new Connection(client);
+        sendMessage(con, "Hello client-" + clientSequence++);
 
-        } catch (IOException e) {
-            throw new UgException(e);
-        }
-
-        return new Connection(client);
+        return con;
     }
 
-    private void chat(Connection con) throws IOException {
-        Scanner scanner = new Scanner(System.in);
+    private void chat(Connection con) {
 
         while (con.alive()) {
             receiveMessage(con);
 
-            String send = sendMessage(scanner.next());
+            System.out.print("server > ");
+            String send = sendMessage(con, scanner.nextLine());
 
             if (send.equals("BYE")) {
                 con.close();
@@ -66,20 +54,32 @@ public class ChatServer {
         }
     }
 
-    private void receiveMessage(Connection con) throws IOException {
-        String recv = in.readLine();
+    private void receiveMessage(Connection con) {
+        try
+        {
+            String recv = con.getInputReader()
+                             .readLine();
 
-        System.out.println("client > " + recv);
+            System.out.println("client > " + recv);
+        }
+        catch (IOException e)
+        {
+            throw new UgException(e);
+        }
     }
 
-    private String sendMessage(String message) {
-        try {
+    private String sendMessage(Connection con, String message) {
+        try
+        {
+            BufferedWriter out = con.getOutputReader();
             out.write(message);
             out.newLine();
             out.flush();
 
             return message;
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             throw new UgException(e);
         }
     }

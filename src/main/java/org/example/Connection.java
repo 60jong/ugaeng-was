@@ -1,15 +1,15 @@
 package org.example;
 
-import org.example.exception.UgException;
+import org.example.wrapper.UgSocket;
 
-import java.io.IOException;
-import java.net.Socket;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 
 public class Connection {
 
-    private final Socket socket;
+    private final UgSocket socket;
 
-    public Connection(Socket socket) {
+    public Connection(UgSocket socket) {
         this.socket = socket;
     }
 
@@ -18,10 +18,14 @@ public class Connection {
     }
 
     public void close() {
-        try {
-            socket.close();
-        } catch (IOException e) {
-            throw new UgException(e);
-        }
+        socket.close();
+    }
+
+    public BufferedReader getInputReader() {
+        return socket.getReader();
+    }
+
+    public BufferedWriter getOutputReader() {
+        return socket.getWriter();
     }
 }

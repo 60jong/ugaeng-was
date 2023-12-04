@@ -1,9 +1,9 @@
 package org.example;
 
-import org.example.exception.UgException;
+import org.example.wrapper.UgSocket;
+import org.example.wrapper.exception.UgException;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -11,54 +11,64 @@ import java.util.Scanner;
 
 public class ChatClient {
 
-    private final Socket socket;
+    private static final Scanner scanner = new Scanner(System.in);
+
+    private final UgSocket socket;
     private final SocketAddress serverAddress;
-    private BufferedReader in;
-    private BufferedWriter out;
 
     public ChatClient(String host, int port) {
-        socket = new Socket();
         serverAddress = new InetSocketAddress(host, port);
+        socket = new UgSocket(new Socket());
     }
 
-    public void connect() throws IOException {
+    public void connect() {
         socket.connect(serverAddress);
-
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
 
-    public void chat() throws IOException {
-        Scanner scanner = new Scanner(System.in);
+    public void chat() {
+
         while (socket.isConnected()) {
             if (receiveMessage().equals("BYE")) {
-                socket.close();
+                close();
                 break;
             }
 
-            sendMessage(scanner.next());
+            System.out.print("client > ");
+            sendMessage(scanner.nextLine());
         }
-
         close();
     }
 
-    private void close() throws IOException {
+    private void close() {
         socket.close();
     }
 
-    private String receiveMessage() throws IOException {
-        String recv = in.readLine();
+    private String receiveMessage() {
+        try
+        {
+            String recv = socket.getReader()
+                                .readLine();
 
-        System.out.println("server > " + recv);
-        return recv;
+            System.out.println("server > " + recv);
+            return recv;
+        }
+        catch (IOException e)
+        {
+            throw new UgException(e);
+        }
     }
 
     private void sendMessage(String message) {
-        try {
-            out.write(message);
-            out.newLine();
+
+        try
+        {
+            BufferedWriter out = socket.getWriter();
+
+            out.write(message); out.newLine();
             out.flush();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             throw new UgException(e);
         }
     }
