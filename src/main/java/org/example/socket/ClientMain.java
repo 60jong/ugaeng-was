@@ -1,6 +1,4 @@
-package org.example;
-
-import org.example.wrapper.exception.UgException;
+package org.example.socket;
 
 import java.io.IOException;
 

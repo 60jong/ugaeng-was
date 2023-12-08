@@ -1,8 +1,8 @@
-package org.example;
+package org.example.socket;
 
-import org.example.wrapper.UgServerSocket;
-import org.example.wrapper.UgSocket;
-import org.example.wrapper.exception.UgException;
+import org.example.socket.chat.wrapper.UgServerSocket;
+import org.example.socket.chat.wrapper.UgSocket;
+import org.example.socket.chat.wrapper.exception.UgException;
 import java.io.*;
 import java.util.Scanner;
 

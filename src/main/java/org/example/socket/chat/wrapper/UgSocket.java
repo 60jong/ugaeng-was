@@ -1,6 +1,6 @@
-package org.example.wrapper;
+package org.example.socket.chat.wrapper;
 
-import org.example.wrapper.exception.UgException;
+import org.example.socket.chat.wrapper.exception.UgException;
 
 import java.io.*;
 import java.net.Socket;

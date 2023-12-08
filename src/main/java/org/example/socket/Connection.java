@@ -1,6 +1,6 @@
-package org.example;
+package org.example.socket;
 
-import org.example.wrapper.UgSocket;
+import org.example.socket.chat.wrapper.UgSocket;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

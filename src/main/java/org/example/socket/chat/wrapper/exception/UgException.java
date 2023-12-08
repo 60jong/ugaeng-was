@@ -1,4 +1,4 @@
-package org.example.wrapper.exception;
+package org.example.socket.chat.wrapper.exception;
 
 public class UgException extends RuntimeException {
 
