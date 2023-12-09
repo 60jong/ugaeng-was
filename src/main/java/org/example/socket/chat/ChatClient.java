@@ -1,4 +1,4 @@
-package org.example.socket;
+package org.example.socket.chat;
 
 import org.example.socket.chat.wrapper.UgSocket;
 import org.example.socket.chat.wrapper.exception.UgException;

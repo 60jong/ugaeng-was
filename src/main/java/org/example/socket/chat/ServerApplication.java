@@ -1,4 +1,4 @@
-package org.example.socket;
+package org.example.socket.chat;
 
 import java.io.IOException;
 

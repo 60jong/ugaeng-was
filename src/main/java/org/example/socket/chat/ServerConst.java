@@ -1,4 +1,4 @@
-package org.example.socket;
+package org.example.socket.chat;
 
 public class ServerConst {
 
